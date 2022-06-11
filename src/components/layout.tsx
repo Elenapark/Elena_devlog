@@ -27,6 +27,7 @@ const Layout: React.FC<React.PropsWithChildren<LayoutProps>> = ({
       <title>
         {pageTitle} | {site.siteMetadata.description}
       </title>
+      <h1>{site.siteMetadata.description}</h1>
       <nav>
         <ul>
           <li>
@@ -40,10 +41,7 @@ const Layout: React.FC<React.PropsWithChildren<LayoutProps>> = ({
           </li>
         </ul>
       </nav>
-      <main>
-        <h1>{pageTitle}</h1>
-        {children}
-      </main>
+      <main>{children}</main>
     </div>
   );
 };
