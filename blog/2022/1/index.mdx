@@ -1,0 +1,49 @@
+---
+name: "Customer Research Management : The New CRM"
+datePublished: "2022-06-10"
+author: "엘레나"
+image: "./image1.jpg"
+image_alt: "a notebook with coding screen is placed on a desk"
+image_credit_text: "Jane Almon"
+image_credit_link: "https://unsplash.com/photos/7rriIaBH6JY"
+---
+
+This is my first blog post! Isn't it _great_?
+Some of my **favorite** things are:
+
+- Petting dogs
+- Singing
+- Eating potato-based foods
+
+```jsx
+// here's a button in React!
+<button
+  onClick={() => {
+    alert("Hello MDX!");
+  }}
+>
+  test
+</button>
+```
+
+```jsx
+const BlogPage = ({ data }) => {
+  console.log(data);
+  return (
+    <Layout pageTitle="My Blog Posts">
+      {data.allMdx.nodes.map((node) => {
+        return (
+          <Post key={node.id}>
+            <h2 style={{ color: "tomato" }}>
+              <StyledLink to={`/blog/${node.slug}`}>
+                {node.frontmatter.name}
+              </StyledLink>
+            </h2>
+            <p>{node.frontmatter.datePublished}</p>
+          </Post>
+        );
+      })}
+    </Layout>
+  );
+};
+```

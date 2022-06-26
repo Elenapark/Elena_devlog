@@ -2,13 +2,16 @@ import * as React from "react";
 import Layout from "../../components/layout";
 import { graphql } from "gatsby";
 import { MDXRenderer } from "gatsby-plugin-mdx";
+import styled from "styled-components";
 
 const BlogPost = ({ data }) => {
   console.log(data);
   return (
-    <Layout pageTitle="Super Cool Blog Posts">
-      <h2>{data.mdx.frontmatter.name}</h2>
-      <p>{data.mdx.frontmatter.date}</p>
+    <Layout pageTitle={data.mdx.frontmatter.name}>
+      <Title>
+        <h2>{data.mdx.frontmatter.name}</h2>
+        <p>작성된 날짜 : {data.mdx.frontmatter.datePublished}</p>
+      </Title>
       <MDXRenderer>{data.mdx.body}</MDXRenderer>
     </Layout>
   );
@@ -35,3 +38,9 @@ export const query = graphql`
 `;
 
 export default BlogPost;
+
+const Title = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
