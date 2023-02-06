@@ -1,42 +1,40 @@
 import * as React from "react";
-import { Link, graphql } from "gatsby";
+import { Link, graphql, PageProps } from "gatsby";
 import Layout from "../../components/layout";
+import Post from "../../components/Post";
 
-const BlogPage = ({ data }) => {
-  console.log(data);
+const BlogPage = ({ data }: PageProps<Queries.BlogListQuery>) => {
   return (
-    <Layout pageTitle="My Blog Posts">
-      {data.allMdx.nodes.map((node) => {
-        return (
-          <section className="flex justify-between items-center" key={node.id}>
-            <h2 style={{ color: "tomato" }}>
-              <Link to={`/blog/${node.slug}`}>{node.frontmatter.name}</Link>
-            </h2>
-            <p>{node.frontmatter.datePublished}</p>
-          </section>
-        );
-      })}
+    <Layout pageTitle="Blog">
+      <ul className="h-full">
+        {data.allMdx.nodes.map((node) => {
+          return <Post key={node.id} node={node} />;
+        })}
+      </ul>
     </Layout>
   );
 };
 
 export const query = graphql`
-  query {
+  query BlogList {
     allMdx(sort: { fields: frontmatter___datePublished, order: DESC }) {
       nodes {
+        id
         frontmatter {
-          name
-          datePublished(formatString: "")
           author
+          image
+          datePublished(formatString: "")
+          image_alt
+          name
+          title
         }
         body
         parent {
           ... on File {
-            modifiedTime(formatString: "YYYY.MM.DD hh:mm")
+            modifiedTime
           }
         }
         slug
-        id
       }
     }
   }

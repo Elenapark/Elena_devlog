@@ -7,6 +7,7 @@ module.exports = {
   theme: {
     fontFamily: {
       lato: ["Lato", "sans-serif"],
+      notoSerif: ["Noto Serif KR", "serif"],
     },
     extend: {},
   },
