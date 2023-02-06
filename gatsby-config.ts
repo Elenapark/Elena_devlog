@@ -3,7 +3,7 @@ import type { GatsbyConfig } from "gatsby";
 const config: GatsbyConfig = {
   siteMetadata: {
     title: `My Blog`,
-    siteUrl: `https://www.yourdomain.tld`,
+    siteUrl: `https://gatsbyblogmaster61089.gatsbyjs.io`,
     description: "엘레나의 개발 블로그👩🏻‍💻",
   },
   // More easily incorporate content into your pages through automatic TypeScript type generation and better GraphQL IntelliSense.
@@ -11,11 +11,10 @@ const config: GatsbyConfig = {
   // Learn more at: https://gatsby.dev/graphql-typegen
   graphqlTypegen: true,
   plugins: [
-    "gatsby-plugin-styled-components",
     "gatsby-plugin-image",
     "gatsby-plugin-sharp",
-    "gatsby-plugin-styled-components",
     "gatsby-transformer-sharp",
+    "gatsby-plugin-postcss",
     {
       resolve: "gatsby-source-filesystem",
       options: {

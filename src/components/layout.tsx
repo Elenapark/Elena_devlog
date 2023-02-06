@@ -1,16 +1,31 @@
 import * as React from "react";
 import { Link, useStaticQuery, graphql } from "gatsby";
-import styled from "styled-components";
 
 interface LayoutProps {
   pageTitle: string;
 }
 
-const NAVBAR = [
-  // { title: "Home", url: "/" },
-  { title: "BLOG", url: "/blog" },
-  { title: "ABOUT", url: "/about" },
-];
+interface IMetaTitleProps {
+  pageTitle: string;
+  site: {
+    id: string;
+    siteMetadata: {
+      description: string;
+      siteUrl: string;
+      title: string;
+    };
+  };
+}
+
+export const MetaTitle = ({ pageTitle, site }: IMetaTitleProps) => {
+  return (
+    <title>
+      {pageTitle} | {site.siteMetadata.description}
+    </title>
+  );
+};
+
+const NAVBAR = [{ title: "BLOG", url: "/blog" }];
 
 const Layout: React.FC<React.PropsWithChildren<LayoutProps>> = ({
   pageTitle,
@@ -31,55 +46,31 @@ const Layout: React.FC<React.PropsWithChildren<LayoutProps>> = ({
 
   const { site } = data;
   return (
-    <Wrapper>
-      <title>
-        {pageTitle} | {site.siteMetadata.description}
-      </title>
-      <Header>
-        <h2>
-          <StyledLink to="/">{site.siteMetadata.description}</StyledLink>
-        </h2>
-        <Navbar>
-          {NAVBAR.map((el, idx) => (
-            <ListItem key={el.url + idx}>
-              <StyledLink to={el.url}>{el.title}</StyledLink>
-            </ListItem>
-          ))}
-        </Navbar>
-      </Header>
-      <main>{children}</main>
-    </Wrapper>
+    <main>
+      <MetaTitle pageTitle={pageTitle} site={site} />
+      {/* header */}
+      <header className="border-b bg-neutral-200 p-2">
+        <div className="max-w-4xl mx-auto p-2">
+          <section className="flex justify-between items-center">
+            <h2>
+              <Link to="/">{site.siteMetadata.description}</Link>
+            </h2>
+            <ul className="flex justify-between items-center">
+              {NAVBAR.map((el, idx) => (
+                <li key={el.url + idx}>
+                  <Link to={el.url}>{el.title}</Link>
+                </li>
+              ))}
+            </ul>
+          </section>
+        </div>
+      </header>
+      {/* main contents */}
+      <main className="max-w-4xl mx-auto p-2 h-[100vh] font-lato">
+        {children}
+      </main>
+    </main>
   );
 };
 
 export default Layout;
-
-const Wrapper = styled.main`
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 10px;
-`;
-
-const Header = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 2px solid #e9f1f7;
-`;
-
-const Navbar = styled.ul`
-  list-style: none;
-  display: flex;
-  justify-content: space-between;
-  width: 100px;
-`;
-
-const ListItem = styled.li``;
-
-const StyledLink = styled(Link)`
-  text-decoration: none;
-  color: black;
-  &:visited {
-    text-decoration: none;
-  }
-`;

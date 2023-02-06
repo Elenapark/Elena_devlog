@@ -1,6 +1,5 @@
-import { Link, graphql } from "gatsby";
 import * as React from "react";
-import styled from "styled-components";
+import { Link, graphql } from "gatsby";
 import Layout from "../../components/layout";
 
 const BlogPage = ({ data }) => {
@@ -9,14 +8,12 @@ const BlogPage = ({ data }) => {
     <Layout pageTitle="My Blog Posts">
       {data.allMdx.nodes.map((node) => {
         return (
-          <Post key={node.id}>
+          <section className="flex justify-between items-center" key={node.id}>
             <h2 style={{ color: "tomato" }}>
-              <StyledLink to={`/blog/${node.slug}`}>
-                {node.frontmatter.name}
-              </StyledLink>
+              <Link to={`/blog/${node.slug}`}>{node.frontmatter.name}</Link>
             </h2>
             <p>{node.frontmatter.datePublished}</p>
-          </Post>
+          </section>
         );
       })}
     </Layout>
@@ -46,14 +43,3 @@ export const query = graphql`
 `;
 
 export default BlogPage;
-
-const Post = styled.article`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-const StyledLink = styled(Link)`
-  text-decoration: none;
-  color: black;
-`;
