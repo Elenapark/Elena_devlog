@@ -12,11 +12,14 @@ export default function Post({ node }) {
             className="w-full h-full object-cover"
           />
         </div>
-        <div className="flex justify-between w-full">
-          <h2 className="text-lg">{node.frontmatter.name}</h2>
-          <p className="text-zinc-400 text-sm ml-2">
-            {node.frontmatter.datePublished}
-          </p>
+        <div className="flex flex-col justify-around w-full">
+          <h2 className="text-lg">
+            {node.frontmatter.name}
+            <span className="text-zinc-400 text-sm ml-2">
+              {node.frontmatter.datePublished}
+            </span>
+          </h2>
+          <p className="text-zinc-500 ">{node.excerpt}</p>
         </div>
       </li>
     </Link>

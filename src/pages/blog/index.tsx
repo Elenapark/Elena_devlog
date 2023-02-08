@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Link, graphql, PageProps } from "gatsby";
+import { graphql, PageProps } from "gatsby";
 import Layout from "../../components/layout";
 import Post from "../../components/Post";
 
@@ -26,15 +26,15 @@ export const query = graphql`
           datePublished(formatString: "")
           image_alt
           name
-          title
         }
-        body
+        excerpt(pruneLength: 50)
         parent {
           ... on File {
             modifiedTime
           }
         }
         slug
+        body
       }
     }
   }

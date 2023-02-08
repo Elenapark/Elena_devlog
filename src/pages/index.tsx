@@ -39,15 +39,15 @@ export const query = graphql`
           datePublished(formatString: "")
           image_alt
           name
-          title
         }
-        body
+        excerpt(pruneLength: 50)
         parent {
           ... on File {
             modifiedTime
           }
         }
         slug
+        body
       }
     }
   }

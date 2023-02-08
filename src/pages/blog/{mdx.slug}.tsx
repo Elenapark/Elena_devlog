@@ -3,21 +3,22 @@ import Layout from "../../components/layout";
 import { graphql } from "gatsby";
 import { MDXRenderer } from "gatsby-plugin-mdx";
 
-const BlogPost = ({ data }) => {
-  console.log(data);
+const BlogPost = ({ data }: { data: Queries.PostDetailQuery }) => {
   return (
-    <Layout pageTitle={data.mdx.frontmatter.name}>
-      <section className="flex justify-between items-center">
-        <h2>{data.mdx.frontmatter.name}</h2>
-        <p>작성된 날짜 : {data.mdx.frontmatter.datePublished}</p>
+    <Layout pageTitle={data.mdx?.frontmatter?.name!}>
+      <section className="flex justify-between items-center my-8">
+        <h1 className="text-xl">{data.mdx?.frontmatter?.name}</h1>
+        <span className="text-zinc-400 text-sm">
+          {data.mdx?.frontmatter?.datePublished}
+        </span>
       </section>
-      <MDXRenderer>{data.mdx.body}</MDXRenderer>
+      <MDXRenderer>{data.mdx?.body!}</MDXRenderer>
     </Layout>
   );
 };
 
 export const query = graphql`
-  query ($id: String) {
+  query PostDetail($id: String) {
     mdx(id: { eq: $id }) {
       frontmatter {
         name
