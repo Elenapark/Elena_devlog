@@ -2,7 +2,6 @@ import * as React from "react";
 import Layout from "../../components/layout";
 import { graphql } from "gatsby";
 import { MDXRenderer } from "gatsby-plugin-mdx";
-import { GatsbyImage } from "gatsby-plugin-image";
 
 const BlogPost = ({ data }: { data: Queries.PostDetailQuery }) => {
   return (
@@ -14,9 +13,7 @@ const BlogPost = ({ data }: { data: Queries.PostDetailQuery }) => {
         </span>
       </section>
       <article className="px-1">
-        <MDXRenderer localImages={data.mdx?.frontmatter?.mdxImage}>
-          {data.mdx?.body!}
-        </MDXRenderer>
+        <MDXRenderer>{data.mdx?.body!}</MDXRenderer>
       </article>
     </Layout>
   );
@@ -30,11 +27,6 @@ export const query = graphql`
         title
         author
         datePublished(formatString: "YYYY.MM.DD")
-        mdxImage {
-          childImageSharp {
-            gatsbyImageData
-          }
-        }
       }
       body
       parent {

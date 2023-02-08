@@ -9,7 +9,6 @@ const IndexPage = ({
 }: PageProps<Queries.MainBlogListQuery>) => {
   return (
     <Layout pageTitle="Home">
-      {/* self-introduction will be here later*/}
       <div className="mt-4 mb-8 rounded-md overflow-hidden h-[400px]">
         <StaticImage
           src="https://images.unsplash.com/photo-1468276311594-df7cb65d8df6?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2370&q=80"
