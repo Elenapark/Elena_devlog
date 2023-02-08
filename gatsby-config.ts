@@ -3,26 +3,18 @@ import type { GatsbyConfig } from "gatsby";
 const config: GatsbyConfig = {
   siteMetadata: {
     title: `My Blog`,
-    siteUrl: `https://www.yourdomain.tld`,
-    description: "엘레나의 개발 블로그👩🏻‍💻",
+    siteUrl: `https://gatsbyblogmaster61089.gatsbyjs.io`,
+    description: "엘레나의 개발로그👩🏻‍💻",
   },
   // More easily incorporate content into your pages through automatic TypeScript type generation and better GraphQL IntelliSense.
   // If you use VSCode you can also use the GraphQL plugin
   // Learn more at: https://gatsby.dev/graphql-typegen
   graphqlTypegen: true,
   plugins: [
-    "gatsby-plugin-styled-components",
     "gatsby-plugin-image",
     "gatsby-plugin-sharp",
-    "gatsby-plugin-styled-components",
     "gatsby-transformer-sharp",
-    {
-      resolve: "gatsby-source-filesystem",
-      options: {
-        name: `blog`,
-        path: `${__dirname}/blog`,
-      },
-    },
+    "gatsby-plugin-postcss",
     {
       resolve: "gatsby-plugin-mdx",
       options: {
@@ -94,6 +86,13 @@ const config: GatsbyConfig = {
             },
           },
         ],
+      },
+    },
+    {
+      resolve: "gatsby-source-filesystem",
+      options: {
+        name: `blog`,
+        path: `${__dirname}/blog`,
       },
     },
   ],

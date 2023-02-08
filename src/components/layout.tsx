@@ -1,85 +1,75 @@
 import * as React from "react";
+import { FaGithub } from "react-icons/fa";
 import { Link, useStaticQuery, graphql } from "gatsby";
-import styled from "styled-components";
 
 interface LayoutProps {
   pageTitle: string;
 }
 
-const NAVBAR = [
-  // { title: "Home", url: "/" },
-  { title: "BLOG", url: "/blog" },
-  { title: "ABOUT", url: "/about" },
-];
+type MetaTypes = {
+  pageTitle: string;
+  data: Queries.MetadataQuery;
+};
+
+export const MetaTitle = ({ pageTitle, data }: MetaTypes) => {
+  return (
+    <title>
+      {pageTitle} | {data.site?.siteMetadata?.description}
+    </title>
+  );
+};
+
+const NAVBAR = [{ title: "글 목록으로", url: "/blog" }];
 
 const Layout: React.FC<React.PropsWithChildren<LayoutProps>> = ({
   pageTitle,
   children,
 }) => {
-  const data = useStaticQuery(graphql`
-    query MyQuery {
+  const data = useStaticQuery<Queries.MetadataQuery>(graphql`
+    query Metadata {
       site {
         id
         siteMetadata {
           description
-          siteUrl
-          title
         }
       }
     }
   `);
 
-  const { site } = data;
   return (
-    <Wrapper>
-      <title>
-        {pageTitle} | {site.siteMetadata.description}
-      </title>
-      <Header>
-        <h2>
-          <StyledLink to="/">{site.siteMetadata.description}</StyledLink>
-        </h2>
-        <Navbar>
-          {NAVBAR.map((el, idx) => (
-            <ListItem key={el.url + idx}>
-              <StyledLink to={el.url}>{el.title}</StyledLink>
-            </ListItem>
-          ))}
-        </Navbar>
-      </Header>
-      <main>{children}</main>
-    </Wrapper>
+    <main>
+      <MetaTitle pageTitle={pageTitle} data={data} />
+      {/* header */}
+      <header className="border-b bg-neutral-200 p-2">
+        <div className="max-w-4xl mx-auto p-2">
+          <section className="flex justify-between items-center">
+            <h2 className="text-xl">
+              <Link to="/">{data.site?.siteMetadata?.description}</Link>
+            </h2>
+            <ul className="flex justify-between items-center text-lg">
+              {NAVBAR.map((el, idx) => (
+                <li key={el.url + idx}>
+                  <Link to={el.url}>{el.title}</Link>
+                </li>
+              ))}
+              <a
+                href="https://github.com/Elenapark"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="ml-2"
+              >
+                <FaGithub />
+              </a>
+            </ul>
+          </section>
+        </div>
+      </header>
+      {/* main contents */}
+      <div className="h-[100vh]">
+        <main className="max-w-4xl mx-auto p-2 font-lato">{children}</main>
+      </div>
+    </main>
   );
 };
 
 export default Layout;
-
-const Wrapper = styled.main`
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 10px;
-`;
-
-const Header = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 2px solid #e9f1f7;
-`;
-
-const Navbar = styled.ul`
-  list-style: none;
-  display: flex;
-  justify-content: space-between;
-  width: 100px;
-`;
-
-const ListItem = styled.li``;
-
-const StyledLink = styled(Link)`
-  text-decoration: none;
-  color: black;
-  &:visited {
-    text-decoration: none;
-  }
-`;

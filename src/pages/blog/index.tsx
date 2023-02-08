@@ -1,59 +1,43 @@
-import { Link, graphql } from "gatsby";
 import * as React from "react";
-import styled from "styled-components";
+import { graphql, PageProps } from "gatsby";
 import Layout from "../../components/layout";
+import Post from "../../components/Post";
 
-const BlogPage = ({ data }) => {
-  console.log(data);
+const BlogPage = ({ data }: PageProps<Queries.BlogListQuery>) => {
   return (
-    <Layout pageTitle="My Blog Posts">
-      {data.allMdx.nodes.map((node) => {
-        return (
-          <Post key={node.id}>
-            <h2 style={{ color: "tomato" }}>
-              <StyledLink to={`/blog/${node.slug}`}>
-                {node.frontmatter.name}
-              </StyledLink>
-            </h2>
-            <p>{node.frontmatter.datePublished}</p>
-          </Post>
-        );
-      })}
+    <Layout pageTitle="Blog">
+      <ul className="h-full">
+        {data.allMdx.nodes.map((node) => {
+          return <Post key={node.id} node={node} />;
+        })}
+      </ul>
     </Layout>
   );
 };
 
 export const query = graphql`
-  query {
+  query BlogList {
     allMdx(sort: { fields: frontmatter___datePublished, order: DESC }) {
       nodes {
+        id
         frontmatter {
           name
-          datePublished(formatString: "")
+          title
           author
+          thumbnail
+          datePublished(formatString: "")
         }
-        body
+        excerpt(pruneLength: 50)
         parent {
           ... on File {
-            modifiedTime(formatString: "YYYY.MM.DD hh:mm")
+            modifiedTime
           }
         }
         slug
-        id
+        body
       }
     }
   }
 `;
 
 export default BlogPage;
-
-const Post = styled.article`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-const StyledLink = styled(Link)`
-  text-decoration: none;
-  color: black;
-`;

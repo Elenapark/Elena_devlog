@@ -2,28 +2,39 @@ import * as React from "react";
 import Layout from "../../components/layout";
 import { graphql } from "gatsby";
 import { MDXRenderer } from "gatsby-plugin-mdx";
-import styled from "styled-components";
+import { GatsbyImage } from "gatsby-plugin-image";
 
-const BlogPost = ({ data }) => {
-  console.log(data);
+const BlogPost = ({ data }: { data: Queries.PostDetailQuery }) => {
   return (
-    <Layout pageTitle={data.mdx.frontmatter.name}>
-      <Title>
-        <h2>{data.mdx.frontmatter.name}</h2>
-        <p>작성된 날짜 : {data.mdx.frontmatter.datePublished}</p>
-      </Title>
-      <MDXRenderer>{data.mdx.body}</MDXRenderer>
+    <Layout pageTitle={data.mdx?.frontmatter?.name!}>
+      <section className="flex justify-between items-center py-4 mb-4 border-b px-1">
+        <h1 className="text-2xl">{data.mdx?.frontmatter?.name}</h1>
+        <span className="text-zinc-400">
+          {data.mdx?.frontmatter?.datePublished}
+        </span>
+      </section>
+      <article className="px-1">
+        <MDXRenderer localImages={data.mdx?.frontmatter?.mdxImage}>
+          {data.mdx?.body!}
+        </MDXRenderer>
+      </article>
     </Layout>
   );
 };
 
 export const query = graphql`
-  query ($id: String) {
+  query PostDetail($id: String) {
     mdx(id: { eq: $id }) {
       frontmatter {
         name
+        title
         author
         datePublished(formatString: "YYYY.MM.DD")
+        mdxImage {
+          childImageSharp {
+            gatsbyImageData
+          }
+        }
       }
       body
       parent {
@@ -38,9 +49,3 @@ export const query = graphql`
 `;
 
 export default BlogPost;
-
-const Title = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`;
