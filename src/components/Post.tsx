@@ -7,7 +7,7 @@ export default function Post({ node }) {
       <li className="flex border p-2 rounded-md mb-4">
         <div className="w-1/6 h-[120px] mr-4">
           <img
-            src={node.frontmatter.image}
+            src={node.frontmatter.thumbnail}
             alt={node.frontmatter.name}
             className="w-full h-full object-cover"
           />

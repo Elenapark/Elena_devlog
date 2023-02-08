@@ -36,7 +36,7 @@ export const query = graphql`
         id
         frontmatter {
           author
-          image
+          thumbnail
           datePublished(formatString: "")
           name
           title

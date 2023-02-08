@@ -27,9 +27,9 @@ export const query = graphql`
     mdx(id: { eq: $id }) {
       frontmatter {
         name
+        title
         author
         datePublished(formatString: "YYYY.MM.DD")
-        image
         mdxImage {
           childImageSharp {
             gatsbyImageData

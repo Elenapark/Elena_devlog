@@ -21,11 +21,11 @@ export const query = graphql`
       nodes {
         id
         frontmatter {
-          author
-          image
-          datePublished(formatString: "")
           name
           title
+          author
+          thumbnail
+          datePublished(formatString: "")
         }
         excerpt(pruneLength: 50)
         parent {
