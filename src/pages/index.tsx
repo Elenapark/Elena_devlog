@@ -2,6 +2,7 @@ import * as React from "react";
 import { graphql, PageProps } from "gatsby";
 import Layout from "../components/layout";
 import Post from "../components/Post";
+import { StaticImage } from "gatsby-plugin-image";
 
 const IndexPage = ({
   data: { allMdx },
@@ -10,7 +11,7 @@ const IndexPage = ({
     <Layout pageTitle="Home">
       {/* self-introduction will be here later*/}
       <div className="mt-4 mb-8 rounded-md overflow-hidden h-[400px]">
-        <img
+        <StaticImage
           src="https://images.unsplash.com/photo-1468276311594-df7cb65d8df6?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2370&q=80"
           alt="main-bg"
           className="w-full h-full object-fill"
@@ -37,8 +38,8 @@ export const query = graphql`
           author
           image
           datePublished(formatString: "")
-          image_alt
           name
+          title
         }
         excerpt(pruneLength: 50)
         parent {

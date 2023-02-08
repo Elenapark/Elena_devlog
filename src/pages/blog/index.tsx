@@ -24,8 +24,8 @@ export const query = graphql`
           author
           image
           datePublished(formatString: "")
-          image_alt
           name
+          title
         }
         excerpt(pruneLength: 50)
         parent {
