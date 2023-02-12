@@ -21,18 +21,12 @@ export const query = graphql`
       nodes {
         id
         frontmatter {
-          name
           title
           author
           thumbnail
           datePublished(formatString: "")
         }
         excerpt(pruneLength: 50)
-        parent {
-          ... on File {
-            modifiedTime
-          }
-        }
         slug
         body
       }
