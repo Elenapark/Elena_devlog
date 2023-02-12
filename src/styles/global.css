@@ -2,3 +2,52 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+article h1 {
+  @apply text-3xl my-4;
+}
+
+article h2 {
+  @apply text-xl my-4;
+}
+
+article h3 {
+  @apply text-lg text-zinc-700 my-4;
+}
+
+article h4 {
+  @apply text-base my-4;
+}
+
+p {
+  @apply text-base text-zinc-700;
+}
+
+hr {
+  @apply my-4;
+}
+
+img {
+  @apply max-h-[400px];
+}
+
+article ul {
+  @apply rounded-sm p-2;
+}
+
+article > ul > li {
+  @apply list-inside list-disc;
+}
+
+article > ul > li > ul {
+  @apply border-none;
+}
+
+article > ul > li > ul > li {
+  @apply list-inside border-none;
+  list-style-type: circle;
+}
+
+pre {
+  @apply overflow-scroll;
+}
