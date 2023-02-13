@@ -37,7 +37,6 @@ export const query = graphql`
           author
           thumbnail
           datePublished(formatString: "")
-          name
           title
         }
         excerpt(pruneLength: 50)
