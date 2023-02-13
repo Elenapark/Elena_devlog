@@ -5,5 +5,5 @@
 
 
 ## 배포 URL
-https://gatsbyblogmaster61089-fixblog35566.gatsbyjs.io/
+https://gatsbyblogmaster61089.gatsbyjs.io
 
