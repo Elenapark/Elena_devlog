@@ -8,11 +8,11 @@ article h1 {
 }
 
 article h2 {
-  @apply text-xl my-4;
+  @apply text-xl my-10 font-bold;
 }
 
 article h3 {
-  @apply text-lg text-zinc-700 my-4;
+  @apply text-lg text-indigo-500 font-bold my-4;
 }
 
 article h4 {
@@ -20,7 +20,11 @@ article h4 {
 }
 
 p {
-  @apply text-base text-zinc-700;
+  @apply text-base text-zinc-700 my-2;
+}
+
+p a {
+  @apply text-sm text-zinc-400;
 }
 
 hr {
@@ -32,7 +36,7 @@ img {
 }
 
 article ul {
-  @apply rounded-sm p-2;
+  @apply rounded-sm p-2 bg-indigo-100 mb-8;
 }
 
 article > ul > li {
@@ -48,6 +52,10 @@ article > ul > li > ul > li {
   list-style-type: circle;
 }
 
-pre {
+article pre {
   @apply overflow-scroll;
+}
+
+article aside {
+  @apply bg-neutral-100 p-4 my-2;
 }
