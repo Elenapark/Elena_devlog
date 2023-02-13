@@ -1,0 +1,316 @@
+---
+title: "언론사 추천도서를 크롤링하게 된 과정 (feat. 공공API, Puppeteer)"
+datePublished: "2023-02-13"
+author: "엘레나"
+thumbnail: "https://images.unsplash.com/photo-1640158615573-cd28feb1bf4e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8OHx8Y3Jhd2xpbmclMjBkYXRhfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=1400&q=60"
+---
+
+## 공공 API를 수월하게 적용하는 듯 하였으나..
+
+항상 책을 읽고는 싶었으나 꾸준히 읽지는 못하는 사람들(=== 나)을 위한 _도서추천, 독서활동 기록_ 앱으로 [📚북로그](https://resplendent-bonbon-fede5b.netlify.app/)를 만들며 생각지도 못한 에러도 많이 접하고, 그 에러를 해결하거나 또는 우회하여 새로운 경험을 한 적이 여러번 있었다.
+
+그 중 하나가 앱 메인에 사용할 추천도서 리스트를 보여주기 위해 공공 API를 사용하면서 겪은 것이다.
+
+### Mixed Content Issue
+
+**에러 이미지 추후에 추가 예정**
+
+도서 검색 API는 카카오,인터파크,네이버 등 다양하게 있지만, 추천 도서 API는 많지가 않았다. 그로 인해 문화체육관광부에서 관리하는 문화공공데이터광장의 [추천도서 API](https://www.culture.go.kr/data/openapi/openapiView.do?id=170&category=F&gubun=A)를 사용하게 되었다.
+
+로컬 환경에서는 문제가 없이 API 요청이 처리되었고 해당 결과에 맞게 프론트단을 구현했지만, 문제는 실서비스 배포 이후였다.
+
+위 에러는 아래와 같이 이야기하고 있다.
+
+<aside>
+💡 Mixed Content issue 발생: 
+<br/>
+이 페이지 ‘https:…”는 HTTPS 기반으로 만들어졌는데 너가 요청보내는 주소는 안전하지 않은 HTTP주소야. 
+<br />
+그래서 이 요청은 보내지지 않을 거야. 요청 주소도 HTTPS 주소여야해.
+
+</aside>
+
+<iframe
+  src="https://giphy.com/embed/l2Jek280UzMXLDfAQ"
+  width="480"
+  height="364"
+  frameBorder="0"
+  class="giphy-embed"
+  allowFullScreen
+></iframe>
+<p>
+  <a href="https://giphy.com/gifs/season-3-the-simpsons-3x5-l2Jek280UzMXLDfAQ">
+    비상! - via GIPHY
+  </a>
+</p>
+
+### Mixed content란
+
+생각지도 못한 에러에 당황하지만 마음을 가다듬고 [MDN](https://developer.mozilla.org/en-US/docs/Web/Security/Mixed_content)에서 차분히 검색해본 결과 아래와 같이 설명하고 있다.
+
+<aside>
+💡 유저가 HTTPS로 만들어진 페이지에 방문하면, 웹 서버로의 연결이 TLS(구.SSL)로 암호화되고, 그로 인해 발생할 수 있는 공격(여기서는 sniffers 또는 중간자 공격 등이 있다고 한다)에 대해 안전하게 보호된다.   여기서 Mixed Content Page란, HTTPS 페이지이면서 HTTP로 이루어진 데이터를 담고있는 페이지를 의미한다. 이러한 페이지들은 *부분적으로만 암호화되어,* 암호화되지 않은 데이터에 공격이 발생할 수도 있게 된다. 결국 그로 인해 전체 페이지가 안전하지 않게 되는 것이다.
+
+</aside>
+
+### 해결해보자
+
+[1] MDN에서 제시하는 [베스트 전략](https://developer.mozilla.org/en-US/docs/Web/Security/Mixed_content/How_to_fix_website_with_mixed_content#how_to_fix_your_website)이 있는데, 이는 모든 컨텐츠를 HTTP 대신 HTTPS로 제공받는 것이다.
+
+- 즉, 요청 리퀘스트를 HTTP 버전이 아닌 HTTPS 버전으로 변경해서 요청하는 것. 또는 요청 도메인 관리자에 요청해서 HTTPS로도 가능하게 만들어줄 수 있는지를 물어볼 수도 있다.
+
+[2] 또는 [HTTP 콘텐츠 보안 정책(CSP)](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/upgrade-insecure-requests)의 upgrade-insecure-requests도 많이 시도하는 방법같다.
+
+```html
+// 아래 코드를 html header부분에 추가한다
+<meta
+  http-equiv="Content-Security-Policy"
+  content="upgrade-insecure-requests"
+/>
+```
+
+- 이 메타태그가 추가된 곳에서 HTTP 요청을 하게 되면 자동으로 HTTPS로 요청 주소를 업그레이드한 후 요청이 보내진다.
+- 이 작업은 실제 요청이 되기 직전에 URL이 다시 쓰여지는 과정을 거치므로, 안전하지 않은 주소로 요청될 일은 없다.
+- _하지만 요청 자체가 HTTPS로는 불가한 HTTP 요청의 경우, 다시 HTTP로 요청되는 일 없이 실패하게 된다._
+
+내 경우에 HTTPS 로 전환 자체가 불가능한 API였기에, 두번째 방법은 사용할 수 없었다. 또한 도메인 관리자에 HTTPS 전환을 요청할 수 있었으나, 그만큼 시간이 걸릴 것을 고민하지 않을 수 없었다.
+
+## 엘리베이터가 늦게 오면 엘리베이터를 고치는 것보다 엘리베이터 밖에 거울을 설치하는 것이 나을 때도 있다
+
+<iframe
+  src="https://giphy.com/embed/14dXclYKbx2ONW"
+  width="480"
+  height="399"
+  frameBorder="0"
+  class="giphy-embed"
+  allowFullScreen
+></iframe>
+<p>
+  <a href="https://giphy.com/gifs/seinfeld-awkward-embarrassed-14dXclYKbx2ONW">
+    핑계는 아니고요.. - via GIPHY
+  </a>
+</p>
+
+### 나의 목적은 무엇인가
+
+핑계처럼 들릴 수도 있겠지만 (물론 어느정도 맞다는 것을 인정한다) 나는 다시금 이 앱의 목적에 대해 생각했다.
+
+- 추천 도서 목록을 가져와 위시리스트에 담는 과정을 통해 독서 활동을 장려한다
+- 독서 활동을 기록하는 기능을 통해 풍부한 독서 활동을 장려한다
+
+만약 회사에서 특정 API를 필히 사용해야하는 상황이라면, 관련 서버개발자와의 협조를 통해 수정하거나 동원 가능한 모든 방법을 강구할 것이다. 하지만 이 프로젝트 목적으로 추천 도서 목록을 가져오는 것이라면 공공 API를 통해서도 좋지만, 내가 도서 목록을 가져오는 것도 하나의 방법이라 생각했다.
+
+### NodeJS와 Puppeteer로 데이터 크롤링을 해보자
+
+이렇게 크롤링 데이터를 사용하기로 급하게 회선을 변경했고, 크롤링 대상은 온라인 서점의 언론사 추천도서 페이지로, 각 언론사 탭을 순서대로 클릭해 해당 언론사의 추천 도서를 20개씩 가져오는 것을 목표로 하였다.
+
+크롤링 툴로는 Puppeteer를 사용하기로 했다.(선택 이유는 아래에서 후술합니다). Puppeteer는 무엇이며 어떤 기능을 가지고 있을까? 아래는 [공식문서](https://pptr.dev/)의 설명이다.
+
+<aside>
+💡 Puppeteer는 DevlTools Protocol을 기반으로 Chrome/Chromium을 제어하는 API를 제공하는 NodeJS 라이브러리이다.  기본적으로 Headless mode* 에서 작동하지만 옵션 구성을 통해 Chrome/Chromium(non-headless mode)에서 작동되도록 구성할 수도 있다. cf) Headless mode - 백그라운드에서 작동하는 브라우저, 창이 시각적으로 보이지는 않지만 실제로 브라우저가 띄워진 것처럼 작업하는 모드
+
+</aside>
+
+- 페이지의 PDFs 또는 스크린샷을 생성한다
+- **_SPA(single-page app)를 크롤링_**하거나, 미리 렌더링된 컨텐츠를 생성한다(SSR)
+- **_Submit과 같은 양식 제출 작업, UI 테스팅, 키보드 인풋 이벤트 등을 자동화_**한다
+- 자동화된 테스트 환경을 만들 수 있다
+- 성능 최적화를 진단하는데 도움이 되도록 사이트의 타임라인 추적을 캡처한다
+- 크롬 익스텐션을 테스팅한다
+
+내가 선택한 온라인 서점은 *SPA*로 만들어져있고, 언론사 추천도서 페이지 내부에서도 _각각의 언론사 버튼을 클릭하여 추가적으로 데이터를 받아와야 했으므로_ 위에서 언급한 두번째, 세번째 기능에 있어 내 프로젝트에 적합하였기에 이 툴을 이용하기로 했다.
+
+### 크롤링은 잘 수행했는데.. 계속 비어있는 데이터를 리턴한다?
+
+Puppeteer를 설치 및 이용하는 방법은 추후 블로그로 정리하는게 좋을 것 같아 여기서는 크롤링 과정에 대해 간단히 공유하고자 한다.
+
+```jsx
+// index.js
+
+const puppeteer = require("puppeteer");
+const fs = require("fs/promises");
+const { mediaBooks } = require("./target/recommendedBooks");
+
+const MAX_MENU_COUNT = 1882;
+
+function getPagesMediaBooks(menuNum) {
+  return `https://www.kyobobook.co.kr/recommend/detail?dsplMenuNum1=1524&dsplMenuNum2=1756#?page=1&per=20&dsplMenuNum=${menuNum}`;
+}
+
+async function scrapeData() {
+  const browswer = await puppeteer.launch();
+  const page = await browswer.newPage();
+
+  let defaultMenuNum = 1871;
+
+  let result = [];
+
+  while (defaultMenuNum <= MAX_MENU_COUNT) {
+    try {
+      await page.goto(getPagesMediaBooks(defaultMenuNum));
+      const data = await page.evaluate(mediaBooks.evaluateData);
+      result = [...result, ...data];
+      result = [...new Set(result)];
+    } catch (error) {
+      console.log(error);
+      break;
+    }
+    defaultMenuNum++;
+  }
+
+  await fs.writeFile(`json/${mediaBooks.title}.json`, JSON.stringify(result));
+
+  await browswer.close();
+}
+
+scrapeData();
+```
+
+```jsx
+// recommendedBooks.js
+
+const mediaBooks = {
+  title: "recommended_books_by_media",
+  url: "https://www.kyobobook.co.kr/recommend/detail?dsplMenuNum1=1524&dsplMenuNum2=1756#?page=1&per=20&dsplMenuNum=1871",
+  evaluateData: () => {
+    return [
+      ...document.querySelectorAll(
+        "#domesticTab > div.switch_prod_wrap.view_type_list > ul > li > div.prod_area.horizontal > div.prod_info_box > a > span"
+      ),
+    ].map((x) => ({
+      id: x.parentNode.parentNode.parentNode.parentNode.dataset.id,
+      title: x.textContent,
+      url: x.parentNode.getAttribute("href"),
+      thumbnail:
+        x.parentNode.parentNode.previousSibling.querySelector(".prod_link img")
+          .src,
+      subDescription:
+        x.parentElement.nextElementSibling.querySelector("p").textContent,
+    }));
+  },
+};
+
+module.exports = { mediaBooks };
+```
+
+분명 올바르게 작성했다고 생각했는데, 자꾸 빈 데이터라니.. 무엇이 잘못된걸까?
+
+<iframe
+  src="https://giphy.com/embed/b8jefh8LnBmMw"
+  width="480"
+  height="260"
+  frameBorder="0"
+  class="giphy-embed"
+  allowFullScreen
+></iframe>
+<p>
+  <a href="https://giphy.com/gifs/b8jefh8LnBmMw">
+    무엇이 문제입니까 휴먼..? - via GIPHY
+  </a>
+</p>
+
+API 문서를 살펴보며 디버깅을 하던 중, 헉 - 하는 소리없는 외침 이후 나는 무엇이 잘못된 것인지 알았다.
+
+```jsx
+// index.js - while문
+
+while (defaultMenuNum <= MAX_MENU_COUNT) {
+  try {
+    // 지정된 페이지에 방문해서
+    await page.goto(getPagesMediaBooks(defaultMenuNum));
+    // .. 무언가 중간 과정이 필요한 듯 하다 ..
+    // page 내부를 탐색한 뒤 데이터를 받아온다
+    const data = await page.evaluate(mediaBooks.evaluateData);
+
+    result = [...result, ...data];
+    result = [...new Set(result)];
+  } catch (error) {
+    console.log(error);
+    break;
+  }
+  defaultMenuNum++;
+}
+```
+
+<aside>
+💡 문제는 페이지를 방문한 뒤 page 내부를 탐색하기 이전에 있다.
+
+</aside>
+
+이 페이지는 무엇? ⇒ Single Page App!
+
+즉, 용량이 큰 번들링 파일을 받아오며 페이지 로드가 되기도 전 이미 이 빠른 크롤링툴은 자기가 할 일을 끝내버렸던 것이다.
+
+이를 해결하기 위해 완전히 내부 네트워크 통신이 끝날 때 까지(idle) 기다린 후 page를 탐색하도록 하는 중간 과정이 필요했고, 아래의 코드를 page.evaluate문 직전에 추가해주었다.
+
+```jsx
+/ * options param으로 idleTime, timeout을
+구체적으로 지정할 수 있는 객체를 넘길 수 도 있다. */
+
+await page.waitForNetworkIdle();
+```
+
+### 드디어 원하는 형태로 데이터를 추출하다
+
+드디어 내 JSON 데이터는 제 모습을 갖추게 되었다.(뿌듯)
+
+```jsx
+// recommended_books_by_media.json
+
+[
+  {
+    "id": "S000200770876",
+    "title": "중국은 어떻게 실패하는가",
+    "url": "https://product.kyobobook.co.kr/detail/S000200770876",
+    "thumbnail": "https://contents.kyobobook.co.kr/sih/fit-in/140x0/pdt/9788960519695.jpg",
+    "subDescription": "2023년 2월 1주 선정 "
+  },
+  {
+    "id": "S000200720951",
+    "title": "파워 오브 펀",
+    "url": "https://product.kyobobook.co.kr/detail/S000200720951",
+    "thumbnail": "https://contents.kyobobook.co.kr/sih/fit-in/140x0/pdt/9788947548731.jpg",
+    "subDescription": "2023년 2월 1주 선정 "
+  },
+  {
+    "id": "S000200743205",
+    "title": "아무튼, 현수동",
+    "url": "https://product.kyobobook.co.kr/detail/S000200743205",
+    "thumbnail": "https://contents.kyobobook.co.kr/sih/fit-in/140x0/pdt/9791186602928.jpg",
+    "subDescription": "2023년 2월 1주 선정 "
+  },
+  {
+    "id": "S000200762191",
+    "title": "소더비가 사랑한 책들",
+    "url": "https://product.kyobobook.co.kr/detail/S000200762191",
+    "thumbnail": "https://contents.kyobobook.co.kr/sih/fit-in/140x0/pdt/9791188949441.jpg",
+    "subDescription": "2023년 2월 1주 선정 "
+  },
+  {
+    "id": "S000200767236",
+    "title": "인센디어리스",
+    "url": "https://product.kyobobook.co.kr/detail/S000200767236",
+    "thumbnail": "https://contents.kyobobook.co.kr/sih/fit-in/140x0/pdt/9788932041223.jpg",
+    "subDescription": "2023년 2월 1주 선정 "
+  },
+  {
+    "id": "S000200777354",
+    "title": "살아남은 여자들은 세계를 만든다",
+    "url": "https://product.kyobobook.co.kr/detail/S000200777354",
+    "thumbnail": "https://contents.kyobobook.co.kr/sih/fit-in/140x0/pdt/9788936486907.jpg",
+    "subDescription": "2023년 2월 1주 선정 "
+  },
+...
+]
+```
+
+프로젝트에 사용하고 있는 Firebase Real-time Database는 JSON 데이터를 바로 추가할 수 있는 기능이 있어 위 데이터를 넣고 원래 의도대로 추천 도서 목록을 잘 보여줄 수 있게 되었다. (_남은 과제는 크롤링 자동화가 될 것이고, 이것도 추후에 시도해본 뒤 포스팅하려고 한다!)_
+
+## 회고
+
+하나의 예상치 못했던 에러로 인해 ‘문제’라고 생각했던 상황이 결국 또 다른 것을 배우고 학습할 수 있는 ‘기회’가 된다. 문제를 진짜 문제라고 생각하지 말고 또 하나의 기회로 생각하자!
+
+## 참고
+
+- [https://developer.mozilla.org/en-US/docs/Web/Security/Mixed_content](https://developer.mozilla.org/en-US/docs/Web/Security/Mixed_content)
+- [https://developer.mozilla.org/en-US/docs/Web/Security/Mixed_content/How_to_fix_website_with_mixed_content](https://developer.mozilla.org/en-US/docs/Web/Security/Mixed_content/How_to_fix_website_with_mixed_content)
