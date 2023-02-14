@@ -6,7 +6,9 @@ import { StaticImage } from "gatsby-plugin-image";
 
 const IndexPage = ({
   data: { allMdx },
-}: PageProps<Queries.MainBlogListQuery>) => {
+}: {
+  data: PageProps<Queries.MainBlogListQuery>;
+}) => {
   return (
     <Layout pageTitle="Home">
       <div className="mt-4 mb-8 rounded-md overflow-hidden h-[400px]">
@@ -18,7 +20,7 @@ const IndexPage = ({
       </div>
       <h2 className="text-2xl text-center">최신 글</h2>
       <ul className="h-full mt-8">
-        {allMdx.nodes.slice(0, 4).map((node) => {
+        {allMdx.nodes.slice(0, 4).map((node: any) => {
           return <Post key={node.id} node={node} />;
         })}
       </ul>
@@ -30,22 +32,17 @@ export default IndexPage;
 
 export const query = graphql`
   query MainBlogList {
-    allMdx(sort: { fields: frontmatter___datePublished, order: DESC }) {
+    allMdx(sort: { frontmatter: { datePublished: DESC } }) {
       nodes {
-        id
         frontmatter {
           author
+          datePublished
+          slug
           thumbnail
-          datePublished(formatString: "")
           title
         }
+        id
         excerpt(pruneLength: 50)
-        parent {
-          ... on File {
-            modifiedTime
-          }
-        }
-        slug
         body
       }
     }

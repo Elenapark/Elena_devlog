@@ -1,9 +1,9 @@
 import { Link } from "gatsby";
 import React from "react";
 
-export default function Post({ node }) {
+export default function Post({ node }: { node: any }) {
   return (
-    <Link to={`/blog/${node.slug}`}>
+    <Link to={`/blog/${node.frontmatter.slug}`}>
       <li className="flex border rounded-md mb-4">
         <div className="w-1/4 h-[120px] mr-4">
           <img
