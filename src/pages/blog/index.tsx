@@ -7,7 +7,7 @@ const BlogPage = ({ data }: PageProps<Queries.BlogListQuery>) => {
   return (
     <Layout pageTitle="Blog">
       <ul className="h-full">
-        {data.allMdx.nodes.map((node) => {
+        {data.allMdx.nodes.map((node: any) => {
           return <Post key={node.id} node={node} />;
         })}
       </ul>
@@ -17,7 +17,7 @@ const BlogPage = ({ data }: PageProps<Queries.BlogListQuery>) => {
 
 export const query = graphql`
   query BlogList {
-    allMdx(sort: { fields: frontmatter___datePublished, order: DESC }) {
+    allMdx(sort: { frontmatter: { datePublished: DESC } }) {
       nodes {
         id
         frontmatter {
@@ -25,9 +25,9 @@ export const query = graphql`
           author
           thumbnail
           datePublished(formatString: "")
+          slug
         }
         excerpt(pruneLength: 50)
-        slug
         body
       }
     }
