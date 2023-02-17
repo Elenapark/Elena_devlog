@@ -32,7 +32,7 @@ hr {
 }
 
 img {
-  @apply max-h-[400px];
+  @apply max-h-[600px] object-contain;
 }
 
 article ul {
@@ -58,4 +58,11 @@ article pre {
 
 article aside {
   @apply bg-neutral-100 p-4 my-2;
+}
+
+article iframe {
+  @apply mx-auto;
+}
+article iframe p {
+  @apply mx-auto;
 }
