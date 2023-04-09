@@ -17,7 +17,7 @@ const BlogPost = ({
           {data.mdx?.frontmatter?.datePublished}
         </span>
       </section>
-      <article className="px-1">{children}</article>
+      <article className="px-2">{children}</article>
     </Layout>
   );
 };
