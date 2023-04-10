@@ -20,7 +20,7 @@
     "@types/styled-components": "^5.1.25",
     "autoprefixer": "^10.4.13",
     "babel-plugin-styled-components": "^2.0.7",
-    "gatsby": "^5.6.0",
+    "gatsby": "^5.8.1",
     "gatsby-plugin-image": "^3.6.0",
     "gatsby-plugin-mdx": "^5.6.0",
     "gatsby-plugin-page-creator": "^5.6.0",

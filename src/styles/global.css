@@ -8,23 +8,24 @@ article h1 {
 }
 
 article h2 {
-  @apply text-xl my-10 font-bold;
+  @apply text-xl my-6 font-bold;
 }
 
 article h3 {
-  @apply text-lg text-indigo-500 font-bold my-4;
+  @apply text-lg text-indigo-500 font-bold my-6;
 }
 
 article h4 {
-  @apply text-base my-4;
+  @apply text-lg my-4;
 }
 
-p {
+article p {
   @apply text-base text-zinc-700 my-2;
 }
 
-p a {
-  @apply text-sm text-zinc-400;
+/* iframe label */
+article p a p {
+  @apply text-sm text-zinc-400 mx-auto text-center mb-10;
 }
 
 hr {
@@ -60,9 +61,7 @@ article aside {
   @apply bg-neutral-100 p-4 my-2;
 }
 
+/* iframe */
 article iframe {
-  @apply mx-auto;
-}
-article iframe p {
-  @apply mx-auto;
+  @apply mx-auto mt-10;
 }
