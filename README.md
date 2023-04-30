@@ -5,5 +5,5 @@
 
 
 ## 배포 URL
-https://gatsbyblogmaster61089.gatsbyjs.io
+https://elena-park.dev
 
